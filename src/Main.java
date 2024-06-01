@@ -26,6 +26,8 @@ public class Main extends Application {
         resultArea = new TextArea();
         resultArea.setPrefHeight(400);
 
+
+
         directoryPathField = new TextField();
         directoryPathField.setPromptText("Enter directory path");
 
@@ -38,6 +40,7 @@ public class Main extends Application {
 
         var searchButton = new Button();
         searchButton.setText("Search");
+        searchButton.setOnAction(event -> searchFiles(primaryStage));
 
         var hbox = new HBox(10, directoryPathField, browseButton);
         var vbox = new VBox(10, hbox, searchField, searchButton,resultArea);
@@ -54,6 +57,35 @@ public class Main extends Application {
 
         if (selectedDirectory != null) {
             directoryPathField.setText(selectedDirectory.getAbsolutePath());
+        }
+    }
+
+    private void searchFiles() {
+        String directoryPath = directoryPathField.getText();
+        if (directoryPath.isEmpty()) {
+            resultArea.setText("Please provide a directory path.");
+            return;
+        }
+
+        File directory = new File(directoryPath);
+        if (!directory.isDirectory()) {
+            resultArea.setText("The provided path is not a directory.");
+            return;
+        }
+
+        StringBuilder results = new StringBuilder();
+        listFilesInDirectory(directory, results);
+        resultArea.setText(results.toString());
+    }
+
+    private void listFilesInDirectory(File directory, StringBuilder results) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    results.append(file.getName()).append("\n");
+                }
+            }
         }
     }
 }
